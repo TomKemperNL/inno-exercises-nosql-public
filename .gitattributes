@@ -1,0 +1,6 @@
+postgres/db/** text eol=lf
+mongo/db/** text eol=lf
+redis/db/** text eol=lf
+scylla/db/** text eol=lf
+neo/db/** text eol=lf
+csv/** text eol=lf

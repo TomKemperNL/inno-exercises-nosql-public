@@ -1,0 +1,67 @@
+version: "3.9"
+services:  
+  pg:
+    build: ./db/pg
+    restart: always
+    ports: 
+      - 5432:5432
+    volumes:
+      - ./postgres/db/init:/docker-entrypoint-initdb.d/
+      - ./postgres/db/shared:/shared
+      - ./csv:/csv
+    environment:
+      POSTGRES_PASSWORD: 1q2w3e!
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 9091:80
+    volumes:
+      - ./postgres/db/shared:/shared
+    environment:
+      PGADMIN_DEFAULT_EMAIL: student@hu.nl
+      PGADMIN_DEFAULT_PASSWORD: 1q2w3e!
+      PGADMIN_SERVER_JSON_FILE: /shared/server.json
+  mongodb:
+    image: mongo
+    restart: always
+    volumes:
+      - ./mongo/db/init:/docker-entrypoint-initdb.d/
+      - ./mongo/db/shared:/shared
+      - ./csv:/csv
+    ports:
+      - "27017:27017"
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 9092:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+  neo4j:
+    image: neo4j
+    volumes:
+      - ./csv:/import
+    ports:
+      - 9093:7474
+      - 7687:7687
+    environment:
+      - NEO4J_AUTH=none
+  redis:
+    image: redis
+    volumes:
+      - ./csv:/csv
+    ports:
+      - "6379:6379"
+  redisinsight:
+    image: redislabs/redisinsight
+    ports:
+      - "9094:8001"
+  scylla:
+    image: scylladb/scylla
+    command: [ '--smp 1' ]
+    volumes:
+      - ./csv:/csv
+    ports:
+      - "127.0.0.1:9042:9042"
+      - "127.0.0.1:10000:10000"
